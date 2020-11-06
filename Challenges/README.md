@@ -1,6 +1,6 @@
 # Challenge List
 
-This repository consists of the challenges for the Hack n' Flag 2020 organised by 4 polytechnics in Singapore.
+This repository consists of the challenges for the Hack n' Flag 2020 organised by NullSec in Ngee Ann Polytechnic.
 
 ## Challenges
 
