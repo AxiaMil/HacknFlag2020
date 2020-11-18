@@ -2,7 +2,7 @@
 
 ## Question Text
 
-My friend Caesar sent me a message encoded by his own cryptosystem. He says it is already well-known internationally. What did he say?
+My friend Caesar sent me a message encoded by his own cryptosystem. He says it is already well-known internationally but with a twist. What did he say?
 
 *Creator - @Zibin
 
@@ -17,7 +17,7 @@ My friend Caesar sent me a message encoded by his own cryptosystem. He says it i
 - Caesar Salad.txt
 
 ## Solution
-1. Use rot13.com and place in the text.
+1. Use rot13.com and place in the text, rotating 21 characters.
 
 ### Flag
 `HNF{wh4t_f0r_d1nner?}`
