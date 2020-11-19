@@ -1,0 +1,118 @@
+version: '2'
+
+services:
+  ctfd:
+    build: /CTFd
+    user: root
+    restart: always
+    environment:
+      - UPLOAD_FOLDER=/var/uploads
+      - DATABASE_URL=mysql+pymysql://root:ctfd@db/ctfd
+      - REDIS_URL=redis://cache:6379
+      - WORKERS=1
+      - LOG_FOLDER=/var/log/CTFd
+      - ACCESS_LOG=-
+      - ERROR_LOG=-
+      - VIRTUAL_HOST=ctf.nullsecsig.com
+      - LETSENCRYPT_HOST=ctf.nullsecsig.com
+    volumes:
+      - .data/CTFd/logs:/var/log/CTFd
+      - .data/CTFd/uploads:/var/uploads
+      - .:/opt/CTFd:ro
+    depends_on:
+      - db
+    networks:
+        default:
+        internal:
+  db:
+    image: mariadb:10.4
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=NPadmin
+      - MYSQL_USER=ctfd
+      - MYSQL_PASSWORD=NPadmin
+      - MYSQL_DATABASE=ctfd
+    volumes:
+      - .data/mysql:/var/lib/mysql
+    networks:
+        internal:
+    # This command is required to set important mariadb defaults
+    command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
+
+  cache:
+    image: redis:4
+    restart: always
+    volumes:
+    - .data/redis:/data
+    networks:
+        internal:
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - conf:/etc/nginx/conf.d
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - dhparam:/etc/nginx/dhparam
+      - certs:/etc/nginx/certs:ro
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      default:
+      internal:
+
+  nginx-proxy-companion:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    volumes_from:
+      - nginx-proxy
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  whoami:
+    image: jwilder/whoami
+    environment:
+      - VIRTUAL_HOST=whoami.ctf.nullsecsig.com
+      - LETSENCRYPT_HOST=whoami.ctf.nullsecsig.com
+  math:
+    image: nginx:alpine
+    volumes:
+      - /HacknFlag2020/Challenges/Misc/I_Love_Math/generate:/usr/share/nginx/html:ro
+    environment:
+      - VIRTUAL_HOST=math.ctf.nullsecsig.com
+      - LETSENCRYPT_HOST=math.ctf.nullsecsig.com
+  show_me:
+    image: nginx:alpine
+    volumes:
+      - /HacknFlag2020/Challenges/Misc/Show_me:/usr/share/nginx/html:ro
+    environment:
+      - VIRTUAL_HOST=show-me.ctf.nullsecsig.com
+      - LETSENCRYPT_HOST=show-me.ctf.nullsecsig.com
+  inject:
+    image: php:7.0-apache
+    volumes:
+      - /HacknFlag2020/Challenges/Web/Inject/generate:/var/www/html:ro
+    environment:
+      - VIRTUAL_HOST=inject.ctf.nullsecsig.com
+      - LETSENCRYPT_HOST=inject.ctf.nullsecsig.com
+  spam:
+    build: /HacknFlag2020/Challenges/Programming/spam/generate
+    ports:
+            - "8080:8080"
+  emdeefive:
+    build: /HacknFlag2020/Challenges/Programming/emdeeefivee/generate
+    ports:
+            - "8081:8081"
+
+networks:
+    default:
+    internal:
+        internal: true
+volumes:
+  conf:
+  vhost:
+  html:
+  dhparam:
+  certs:
