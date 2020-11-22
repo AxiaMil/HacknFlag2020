@@ -4,12 +4,12 @@ import time
 import hashlib
 import socket
 
-host = "127.0.0.1"
-port = 5000
+host = "ctf.nullsecsig.com"
+port = 8081
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((host, port))
 print("Connected")
-while True:
+for _ in range(10):
 	result = s.recv(1024).strip();
 	print(result.decode())
 	string = result[-20:]
